@@ -53,7 +53,7 @@ typedef struct {
 static aa_node aa_nodes[] =
 {
   {"ALA", 'A', 0,  0.0756,  1.52,  1.8,
-   NULL },
+   0 },
   {"ARG", 'R', 1,  0.0515,  2.84, -4.5,
    HBOND_DONOR | POLAR | POSITIVE_CHARGE },
   {"ASN", 'N', 2,  0.0451,  2.41, -3.5,
@@ -71,9 +71,9 @@ static aa_node aa_nodes[] =
   {"HIS", 'H', 8,  0.0224,  1.70, -3.2,
    HBOND_DONOR | HBOND_ACCEPTOR | POLAR | POSITIVE_CHARGE | ZN_BINDING},
   {"ILE", 'I', 9,  0.0578,  0.03,  4.5,
-   NULL },
+   0 },
   {"LEU", 'L', 10, 0.0940,  0.13,  3.8,
-   NULL },
+   0 },
   {"LYS", 'K', 11, 0.0596,  2.82, -3.9,
    HBOND_DONOR | POLAR | POSITIVE_CHARGE },
   {"MET", 'M', 12, 0.0236,  0.60,  1.9,
@@ -91,7 +91,7 @@ static aa_node aa_nodes[] =
   {"TYR", 'Y', 18, 0.0319,  0.87, -1.3,
    RING | HBOND_DONOR | HBOND_ACCEPTOR | POLAR | AROMATIC }, 
   {"VAL", 'V', 19, 0.0655,  0.61,  4.2,
-   NULL }
+   0 }
 };
 static char aa_c1_codes[] = "ARNDCQEGHILKMFPSTWYV";
 static int aa_nodes_count = 20;
