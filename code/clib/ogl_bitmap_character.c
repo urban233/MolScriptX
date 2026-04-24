@@ -23,7 +23,23 @@
 
 #include <assert.h>
 
-#include <../lib/glut/glutbitmap.h>
+#include <GL/glut.h>
+
+typedef struct {
+    const GLsizei width;
+    const GLsizei height;
+    const GLfloat xorig;
+    const GLfloat yorig;
+    const GLfloat advance;
+    const GLubyte *bitmap;
+} BitmapCharRec, *BitmapCharPtr;
+
+typedef struct {
+    const char *name;
+    const int num_chars;
+    const int first;
+    const BitmapCharRec * const *ch;
+} BitmapFontRec, *BitmapFontPtr;
 
 
 /*------------------------------------------------------------*/

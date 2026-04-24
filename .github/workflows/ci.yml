@@ -1,0 +1,57 @@
+name: Build MolScript RPM (AlmaLinux)
+
+# This triggers the workflow when you push to the main branch
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch: # Adds a button to run it manually from the GitHub UI
+
+jobs:
+  build-rpm:
+    runs-on: ubuntu-latest
+    # Run everything inside a pure AlmaLinux 9 container
+    container: almalinux:9
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install AlmaLinux Build Dependencies
+        run: |
+          dnf install -y 'dnf-command(config-manager)'
+          dnf install -y epel-release
+          dnf config-manager --set-enabled crb
+          dnf install -y gcc make bison freeglut-devel libjpeg-turbo-devel libpng-devel zlib-devel gd-devel libXmu-devel libX11-devel libXext-devel ruby ruby-devel rubygems rpm-build
+
+      - name: Install FPM (Effing Package Management)
+        run: gem install fpm
+
+      - name: Compile MolScript and MolAuto
+        run: |
+          cd code
+          # Clean old builds just in case
+          make -f Makefile.complete clean || true
+          # Compile the modernized version
+          make -f Makefile.complete
+
+      - name: Package RPM using FPM
+        run: |
+          # Create the fake root directory structure
+          mkdir -p pkg_root/usr/local/bin
+          cp molscript pkg_root/usr/local/bin/
+          cp molauto pkg_root/usr/local/bin/
+          
+          # Generate the RPM file
+          fpm -s dir -t rpm \
+            -n "molscript" \
+            -v "2.1.2" \
+            --iteration "1.almalinux9" \
+            --description "Classic 1990s structural biology rendering tool." \
+            -C pkg_root .
+
+      - name: Upload RPM Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: molscript-almalinux9-rpm
+          path: "*.rpm"
+          retention-days: 14
