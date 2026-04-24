@@ -557,6 +557,7 @@ output_quoted_string (char *str)
 
 
 /*------------------------------------------------------------*/
+int
 main (int argc, char *argv[])
 {
   char *pdbfilename;
