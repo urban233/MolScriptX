@@ -1,3 +1,21 @@
+# MolScriptX
+
+**Modernized fork of MolScript v2.1.2**
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Platform: Linux](https://img.shields.io/badge/Platform-Linux-blue.svg)
+
+MolScript is a classic program for displaying molecular 3D structures, such as proteins, in both schematic and detailed representations. **MolScriptX** is a modern fork dedicated to ensuring compatibility with contemporary Linux environments and streamlining the build process.
+
+## Why MolScriptX?
+
+The original MolScript code (v2.1.2) has remained largely untouched since 1998. While it remains a gold standard for publication-quality molecular graphics, the original Makefiles are incompatible with modern compilers, headers, and library paths.
+
+**MolScriptX addresses this by:**
+* **Modernized Build System:** Updated Makefiles that work with current GCC versions.
+* **Linux Compatibility:** Verified installation paths for Debian/Ubuntu, RHEL/Fedora, and OpenSUSE.
+
+
 MolScript v2.1.2
 ================
 
