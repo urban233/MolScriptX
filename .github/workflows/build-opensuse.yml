@@ -25,11 +25,6 @@ jobs:
         run: |
           zypper install -y gcc make bison freeglut-devel libjpeg8-devel libpng16-devel zlib-devel gd-devel libXmu-devel libX11-devel libXext-devel ruby ruby-devel rubygems rpm-build
 
-      - name: Install FPM
-        run: |
-          # Install fpm (dropping the ignored --bindir flag)
-          gem install fpm --no-document
-
       - name: Compile MolScript and MolAuto
         run: |
           cd code
@@ -38,6 +33,7 @@ jobs:
 
       - name: Package RPM using FPM
         run: |
+          gem install fpm --no-document
           export PATH="$(gem env bindir):$PATH"
 
           mkdir -p pkg_root/usr/local/bin
