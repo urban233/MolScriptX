@@ -36,8 +36,8 @@ jobs:
 
       - name: Package RPM using FPM
         run: |
-          # 1. Force the shell to look in all possible Ruby/Local binary locations
-          export PATH="/usr/local/bin:$(ruby -e 'puts Gem.bindir'):$PATH"
+          # 1. Dynamically load ALL Ruby gem binary paths into $PATH
+          export PATH="$(ruby -e 'puts Gem.path.map{|p| "#{p}/bin"}.join(":")'):$PATH"
           
           # 2. Build the directory structure
           mkdir -p pkg_root/usr/local/bin
