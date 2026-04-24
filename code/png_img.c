@@ -74,9 +74,9 @@ pngi_first_plot (void)
 
   png_init_io (png_ptr, outfile);
   png_set_compression_level (png_ptr, compression_level);
-  png_set_IHDR(png_ptr, info_ptr, width, height, bit_depth,
-             PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
-             PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+  
+  png_set_IHDR (png_ptr, info_ptr, output_width, output_height, 8,
+		PNG_COLOR_TYPE_RGB, NULL, NULL, NULL);
 
   if (title) {
     text_ptr[count].key = "Title";
