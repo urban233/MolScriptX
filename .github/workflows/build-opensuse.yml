@@ -36,10 +36,15 @@ jobs:
 
       - name: Package RPM using FPM
         run: |
+          # 1. Force the shell to look in all possible Ruby/Local binary locations
+          export PATH="/usr/local/bin:$(ruby -e 'puts Gem.bindir'):$PATH"
+          
+          # 2. Build the directory structure
           mkdir -p pkg_root/usr/local/bin
           cp molscript pkg_root/usr/local/bin/
           cp molauto pkg_root/usr/local/bin/
           
+          # 3. Run FPM
           fpm -s dir -t rpm \
             -n "molscript" \
             -v "2.1.2" \
