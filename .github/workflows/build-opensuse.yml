@@ -26,7 +26,12 @@ jobs:
           zypper install -y gcc make bison freeglut-devel libjpeg8-devel libpng16-devel zlib-devel gd-devel libXmu-devel libX11-devel libXext-devel ruby ruby-devel rubygems rpm-build
 
       - name: Install FPM
-        run: gem install fpm --bindir /usr/local/bin
+        run: |
+          # Install fpm (dropping the ignored --bindir flag)
+          gem install fpm --no-document
+          
+          # Ask gem exactly where it placed the binaries, and write it to GitHub's global PATH
+          echo "$(gem env bindir)" >> $GITHUB_PATH
 
       - name: Compile MolScript and MolAuto
         run: |
@@ -36,15 +41,12 @@ jobs:
 
       - name: Package RPM using FPM
         run: |
-          # 1. Dynamically load ALL Ruby gem binary paths into $PATH
-          export PATH="$(ruby -e 'puts Gem.path.map{|p| "#{p}/bin"}.join(":")'):$PATH"
-          
-          # 2. Build the directory structure
+          # 1. Build the directory structure
           mkdir -p pkg_root/usr/local/bin
           cp molscript pkg_root/usr/local/bin/
           cp molauto pkg_root/usr/local/bin/
           
-          # 3. Run FPM
+          # 2. Run FPM (GitHub Actions now natively knows exactly where it is)
           fpm -s dir -t rpm \
             -n "molscript" \
             -v "2.1.2" \
