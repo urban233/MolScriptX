@@ -36,17 +36,23 @@ jobs:
 
       - name: Package RPM using FPM
         run: |
-          # Create the fake root directory structure
           mkdir -p pkg_root/usr/local/bin
           cp molscript pkg_root/usr/local/bin/
           cp molauto pkg_root/usr/local/bin/
           
-          # Generate the RPM file
           fpm -s dir -t rpm \
             -n "molscript" \
             -v "2.1.2" \
-            --iteration "1.almalinux9" \
+            --iteration "1.almalinux" \
             --description "Classic 1990s structural biology rendering tool." \
+            -d "freeglut" \
+            -d "libjpeg-turbo" \
+            -d "libpng" \
+            -d "gd" \
+            -d "libXmu" \
+            -d "libX11" \
+            -d "libXext" \
+            -d "zlib" \
             -C pkg_root .
 
       - name: Upload RPM Artifact
