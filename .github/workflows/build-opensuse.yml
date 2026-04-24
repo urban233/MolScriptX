@@ -29,9 +29,6 @@ jobs:
         run: |
           # Install fpm (dropping the ignored --bindir flag)
           gem install fpm --no-document
-          
-          # Ask gem exactly where it placed the binaries, and write it to GitHub's global PATH
-          echo "$(gem env bindir)" >> $GITHUB_PATH
 
       - name: Compile MolScript and MolAuto
         run: |
@@ -41,7 +38,8 @@ jobs:
 
       - name: Package RPM using FPM
         run: |
-          # 1. Build the directory structure
+          export PATH="$(gem env bindir):$PATH"
+
           mkdir -p pkg_root/usr/local/bin
           cp molscript pkg_root/usr/local/bin/
           cp molauto pkg_root/usr/local/bin/
