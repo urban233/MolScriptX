@@ -27,6 +27,7 @@ jobs:
       - name: Compile MolScript and MolAuto
         run: |
           cd code
+          sed -i 's/PNG_COLOR_TYPE_RGB, NULL, NULL, NULL/PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT/g' png_img.c
           make -f Makefile.complete clean || true
           make -f Makefile.complete
 
