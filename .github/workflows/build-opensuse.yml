@@ -6,10 +6,8 @@ on:
 jobs:
   build-rpm-suse:
     runs-on: ubuntu-latest
-    # Run everything inside a pure openSUSE container
     container: opensuse/leap:15.6
     steps:
-      # Install checkout requirements first!
       - name: Install Checkout Dependencies
         run: |
           zypper refresh
@@ -20,7 +18,15 @@ jobs:
 
       - name: Install openSUSE Build Dependencies
         run: |
-          zypper install -y gcc make bison freeglut-devel libjpeg8-devel libpng16-devel zlib-devel gd-devel libXmu-devel libX11-devel libXext-devel ruby ruby-devel rubygems rpm-build
+          zypper install -y gcc make bison freeglut-devel libjpeg8-devel libpng16-devel zlib-devel gd-devel libXmu-devel libX11-devel libXext-devel rpm-build
+
+      - name: Install Ruby 3
+        run: |
+          zypper install -y ruby3.2 ruby3.2-devel ruby3.2-rubygems
+
+      - name: Install FPM
+        run: |
+          gem3.2 install fpm --no-document
 
       - name: Compile MolScript and MolAuto
         run: |
@@ -30,14 +36,17 @@ jobs:
 
       - name: Package RPM using FPM
         run: |
-          gem install fpm --no-document
-          FPM=$(find / -name fpm -type f 2>/dev/null | head -1)
+          FPM=$(find / -name fpm -type f 2>/dev/null | grep -v '/gems/fpm' | head -1)
+          # Fallback: find the wrapper script installed by gem3.2
+          if [ -z "$FPM" ]; then
+            FPM=$(find / -name fpm 2>/dev/null | head -1)
+          fi
           echo "Found fpm at: $FPM"
-          
+
           mkdir -p pkg_root/usr/local/bin
           cp molscript pkg_root/usr/local/bin/
           cp molauto pkg_root/usr/local/bin/
-          
+
           $FPM -s dir -t rpm \
             -n "molscript" \
             -v "2.1.2" \
