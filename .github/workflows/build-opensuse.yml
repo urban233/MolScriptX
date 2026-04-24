@@ -12,12 +12,17 @@ jobs:
     container: opensuse/leap:15.6
 
     steps:
+      # Install checkout requirements first!
+      - name: Install Checkout Dependencies
+        run: |
+          zypper refresh
+          zypper install -y tar gzip git
+
       - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Install openSUSE Build Dependencies
         run: |
-          zypper refresh
           zypper install -y gcc make bison freeglut-devel libjpeg8-devel libpng16-devel zlib-devel gd-devel libXmu-devel libX11-devel libXext-devel ruby ruby-devel rubygems rpm-build
 
       - name: Install FPM
@@ -35,7 +40,6 @@ jobs:
           cp molscript pkg_root/usr/local/bin/
           cp molauto pkg_root/usr/local/bin/
           
-          # Notice the '-d' runtime dependencies match openSUSE naming conventions
           fpm -s dir -t rpm \
             -n "molscript" \
             -v "2.1.2" \
