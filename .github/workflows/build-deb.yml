@@ -1,0 +1,57 @@
+name: Build MolScriptX DEB (Ubuntu)
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build-deb:
+    runs-on: ubuntu-latest # Runs natively on Ubuntu
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Ubuntu Build Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc make bison freeglut3-dev libjpeg-dev libpng-dev zlib1g-dev libgd-dev libxmu-dev libx11-dev libxext-dev ruby ruby-dev rubygems
+
+      - name: Install FPM
+        run: sudo gem install fpm
+
+      - name: Compile MolScript and MolAuto
+        run: |
+          cd code
+          make -f Makefile.complete clean || true
+          make -f Makefile.complete
+
+      - name: Package DEB using FPM
+        run: |
+          mkdir -p pkg_root/usr/local/bin
+          cp molscript pkg_root/usr/local/bin/
+          cp molauto pkg_root/usr/local/bin/
+          
+          # Notice the '-d' runtime dependencies match Ubuntu/Debian naming conventions
+          fpm -s dir -t deb \
+            -n "molscript" \
+            -v "2.1.2" \
+            --iteration "1.ubuntu" \
+            --description "Classic 1990s structural biology rendering tool." \
+            -d "freeglut3" \
+            -d "libjpeg8" \
+            -d "libpng16-16" \
+            -d "libgd3" \
+            -d "libxmu6" \
+            -d "libx11-6" \
+            -d "libxext6" \
+            -d "zlib1g" \
+            -C pkg_root .
+
+      - name: Upload DEB Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: molscript-ubuntu-deb
+          path: "*.deb"
+          retention-days: 14

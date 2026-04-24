@@ -1,0 +1,59 @@
+name: Build MolScriptX RPM (openSUSE)
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build-rpm-suse:
+    runs-on: ubuntu-latest
+    # Run everything inside a pure openSUSE container
+    container: opensuse/leap:15.6
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install openSUSE Build Dependencies
+        run: |
+          zypper refresh
+          zypper install -y gcc make bison freeglut-devel libjpeg8-devel libpng16-devel zlib-devel gd-devel libXmu-devel libX11-devel libXext-devel ruby ruby-devel rubygems rpm-build
+
+      - name: Install FPM
+        run: gem install fpm
+
+      - name: Compile MolScript and MolAuto
+        run: |
+          cd code
+          make -f Makefile.complete clean || true
+          make -f Makefile.complete
+
+      - name: Package RPM using FPM
+        run: |
+          mkdir -p pkg_root/usr/local/bin
+          cp molscript pkg_root/usr/local/bin/
+          cp molauto pkg_root/usr/local/bin/
+          
+          # Notice the '-d' runtime dependencies match openSUSE naming conventions
+          fpm -s dir -t rpm \
+            -n "molscript" \
+            -v "2.1.2" \
+            --iteration "1.opensuse" \
+            --description "Classic 1990s structural biology rendering tool." \
+            -d "freeglut" \
+            -d "libjpeg8" \
+            -d "libpng16-16" \
+            -d "gd" \
+            -d "libXmu6" \
+            -d "libX11-6" \
+            -d "libXext6" \
+            -d "libz1" \
+            -C pkg_root .
+
+      - name: Upload RPM Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: molscript-opensuse-rpm
+          path: "*.rpm"
+          retention-days: 14

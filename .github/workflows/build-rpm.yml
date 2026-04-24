@@ -1,6 +1,5 @@
-name: Build MolScript RPM (AlmaLinux)
+name: Build MolScriptX RPM (AlmaLinux)
 
-# This triggers the workflow when you push to the main branch
 on:
   push:
     branches: [ "main", "master" ]
